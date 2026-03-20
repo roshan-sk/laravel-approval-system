@@ -50,18 +50,6 @@ SQLite
 
 Mail (SMTP)
 
-📂 Project Structure
-app/
- ├── Http/Controllers/
- ├── Services/
- │    └── TemporalService.php
- ├── Temporal/
- │    ├── Workflows/
- │    ├── Activities/
- │    └── Worker.php
- ├── Mail/
- └── Models/
-
 Workflow Logic
 Step-by-step flow:
 
