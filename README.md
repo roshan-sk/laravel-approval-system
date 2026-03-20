@@ -139,40 +139,16 @@ temporal server start-dev
 php artisan serve
 
 API Endpoints
+
 -> Create Request
 POST /api/requests
+
 -> Approve Request
 GET /api/requests/{id}/approve
+
 -> Reject Request
 GET /api/requests/{id}/reject
+
 -> View Requests
 GET /api/requests
 GET /api/requests/{id}
-
-Email Flow
-
-Email sent on request creation
-
-Contains:
-
-Request details
-
-Approve / Reject links
-
-Important Notes
-
-Workflow uses generator pattern (yield)
-
-Activities must be called with yield
-
-Workflows are immutable once completed
-
-Always test with new requests
-
-Example Workflow ID
-PR-15
-📊 Temporal UI
-
-Access:
-
-http://localhost:8233
