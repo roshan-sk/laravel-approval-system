@@ -6,69 +6,24 @@ This project is a workflow-driven approval system built using Laravel and Tempor
 Instead of handling approval logic directly in controllers, the system uses Temporal workflows to manage the process asynchronously and reliably.
 
 Features
+- User Create requests
+- Email notification to manager
+- Approve / Reject via email links
+- Workflow-based processing using Temporal
+- Signal-driven decision handling
+- Activity-based DB updates
 
-Create purchase requests
-
-Email notification to manager
-
-Approve / Reject via email links
-
-Workflow-based processing using Temporal
-
-Signal-driven decision handling
-
-Activity-based DB updates
-
-Custom workflow IDs (PR-<id>)
-
-Task queue-based execution (request-queue)
-
-**Architecture**
-Laravel API
-   ↓
-Temporal Service
-   ↓
-Temporal Server
-   ↓
-Task Queue (request-queue)
-   ↓
-Worker (RoadRunner)
-   ↓
-Workflow
-   ↓
-Activities (Email + DB)
-
-Tech Stack
-
-PHP (Laravel)
-
-Temporal PHP SDK
-
-RoadRunner
-
-SQLite
-
-Mail (SMTP)
-
-Workflow Logic
-Step-by-step flow:
+**Workflow Logic**
+_Step-by-step flow_:
 
 User creates request
-
 Workflow starts (PR-<id>)
-
 Activity sends email to manager
-
 Workflow waits for signal
-
 Manager clicks approve/reject link
-
 Laravel sends signal to workflow
-
 Workflow resumes
-
 Activity updates DB status
-
 Workflow completes
 
 
