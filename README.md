@@ -1,58 +1,178 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Approval System (Laravel + Temporal)
+Overview
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This project is a workflow-driven approval system built using Laravel and Temporal.
 
-## About Laravel
+Instead of handling approval logic directly in controllers, the system uses Temporal workflows to manage the process asynchronously and reliably.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Create purchase requests
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Email notification to manager
 
-## Learning Laravel
+Approve / Reject via email links
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Workflow-based processing using Temporal
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Signal-driven decision handling
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+Activity-based DB updates
 
-## Agentic Development
+Custom workflow IDs (PR-<id>)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Task queue-based execution (request-queue)
 
-```bash
-composer require laravel/boost --dev
+🏗️ Architecture
+Laravel API
+   ↓
+Temporal Service
+   ↓
+Temporal Server
+   ↓
+Task Queue (request-queue)
+   ↓
+Worker (RoadRunner)
+   ↓
+Workflow
+   ↓
+Activities (Email + DB)
 
-php artisan boost:install
-```
+Tech Stack
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+PHP (Laravel)
 
-## Contributing
+Temporal PHP SDK
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+RoadRunner
 
-## Code of Conduct
+SQLite
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Mail (SMTP)
 
-## Security Vulnerabilities
+📂 Project Structure
+app/
+ ├── Http/Controllers/
+ ├── Services/
+ │    └── TemporalService.php
+ ├── Temporal/
+ │    ├── Workflows/
+ │    ├── Activities/
+ │    └── Worker.php
+ ├── Mail/
+ └── Models/
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Workflow Logic
+Step-by-step flow:
 
-## License
+User creates request
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Workflow starts (PR-<id>)
+
+Activity sends email to manager
+
+Workflow waits for signal
+
+Manager clicks approve/reject link
+
+Laravel sends signal to workflow
+
+Workflow resumes
+
+Activity updates DB status
+
+Workflow completes
+
+
+Key Concepts Used
+
+ -> Workflow
+
+Controls the approval process
+
+Waits for decision using:
+
+yield Workflow::await(...)
+ -> Activities
+
+Perform actual tasks:
+
+Send email
+
+Update database
+
+-> Signals
+
+Used to resume workflow:
+
+approve()
+reject()
+->Task Queue
+
+request-queue used to distribute tasks to workers
+
+Setup Instructions
+1- Install Dependencies
+
+composer install
+2️- Configure Environment
+
+Update .env:
+
+APP_URL=http://localhost:8000
+
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your_email
+MAIL_PASSWORD=your_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=your_email
+3️- Run Database Migration
+php artisan migrate
+4️- Start Temporal Server
+temporal server start-dev
+5️- Start Worker
+./rr.exe serve
+
+6️- Run Laravel Server
+php artisan serve
+
+API Endpoints
+-> Create Request
+POST /api/requests
+-> Approve Request
+GET /api/requests/{id}/approve
+-> Reject Request
+GET /api/requests/{id}/reject
+-> View Requests
+GET /api/requests
+GET /api/requests/{id}
+
+Email Flow
+
+Email sent on request creation
+
+Contains:
+
+Request details
+
+Approve / Reject links
+
+Important Notes
+
+Workflow uses generator pattern (yield)
+
+Activities must be called with yield
+
+Workflows are immutable once completed
+
+Always test with new requests
+
+Example Workflow ID
+PR-15
+📊 Temporal UI
+
+Access:
+
+http://localhost:8233
