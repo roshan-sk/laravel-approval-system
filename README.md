@@ -1,5 +1,5 @@
-Approval System (Laravel + Temporal)
-Overview
+**Approval System (Laravel + Temporal)**
+- Overview
 
 This project is a workflow-driven approval system built using Laravel and Temporal.
 
@@ -23,7 +23,7 @@ Custom workflow IDs (PR-<id>)
 
 Task queue-based execution (request-queue)
 
-🏗️ Architecture
+**Architecture**
 Laravel API
    ↓
 Temporal Service
