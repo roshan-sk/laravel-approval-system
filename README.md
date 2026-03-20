@@ -1,97 +1,56 @@
 **Approval System (Laravel + Temporal)**
-- Overview
+- About Project
 
-This project is a workflow-driven approval system built using Laravel and Temporal.
+This is a simple Approval System built using Laravel and Temporal.
 
-Instead of handling approval logic directly in controllers, the system uses Temporal workflows to manage the process asynchronously and reliably.
+User creates a request
 
-Features
-- User Create requests
-- Email notification to manager
-- Approve / Reject via email links
-- Workflow-based processing using Temporal
-- Signal-driven decision handling
-- Activity-based DB updates
+Email is sent to manager
 
-**Workflow Logic**
-_Step-by-step flow_:
+Manager approves/rejects using email link
 
-User creates request
-Workflow starts (PR-<id>)
-Activity sends email to manager
-Workflow waits for signal
-Manager clicks approve/reject link
-Laravel sends signal to workflow
-Workflow resumes
-Activity updates DB status
-Workflow completes
+Workflow resumes and updates status
 
+Instead of handling everything in controller, we use Temporal Workflow for better reliability and async processing.
 
-Key Concepts Used
+**Flow**
+Create Request → Email Sent → Wait for Action → Approve/Reject → Update Status
 
- -> Workflow
+_Requirements_
+- PHP (8+)
+- Composer
+- Laravel
+- Temporal CLI
+- RoadRunner
 
-Controls the approval process
+**Installation Steps**
+git clone <your-repo-url>
+cd approval-system
 
-Waits for decision using:
-
-yield Workflow::await(...)
- -> Activities
-
-Perform actual tasks:
-
-Send email
-
-Update database
-
--> Signals
-
-Used to resume workflow:
-
-approve()
-reject()
-->Task Queue
-
-request-queue used to distribute tasks to workers
-
-Setup Instructions
-1- Install Dependencies
-
+**Install Dependencies**
 composer install
-2️- Configure Environment
 
-Update .env:
-
-APP_URL=http://localhost:8000
-
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=your_email
-MAIL_PASSWORD=your_password
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=your_email
-3️- Run Database Migration
+**Run Migration**
 php artisan migrate
-4️- Start Temporal Server
+
+**Start Temporal Server**
 temporal server start-dev
-5️- Start Worker
+
+**Start Worker**
 ./rr.exe serve
 
-6️- Run Laravel Server
+**Run Laravel**
 php artisan serve
 
-API Endpoints
+_API Endpoints_
+Create Request → POST /api/requests
+Approve → GET /api/requests/{id}/approve
+Reject → GET /api/requests/{id}/reject
+View All → GET /api/requests
 
--> Create Request
-POST /api/requests
-
--> Approve Request
-GET /api/requests/{id}/approve
-
--> Reject Request
-GET /api/requests/{id}/reject
-
--> View Requests
-GET /api/requests
-GET /api/requests/{id}
+**Git Commands (Pull Project)**
+Git Commands (Pull / Push)
+git clone <repo-url>
+cd project-folder
+git checkout main
+git pull origin main
